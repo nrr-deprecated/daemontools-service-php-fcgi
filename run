@@ -1,0 +1,13 @@
+#!/bin/bash
+
+exec 2>&1 \
+envdir ./user_env \
+envdir ./env \
+sh -c '
+	# MAX_HEAP can be determined by `python -c "print $MAX_HEAP_IN_MEGABYTES * 2**20"`
+	SOFTLIMIT=${MAX_HEAP+"softlimit -m $MAX_HEAP"}
+	
+	exec setuidgid $USER \
+	$SOFTLIMIT \
+	$PHP_CGI -b $BIND -c ./root/php.ini
+'
